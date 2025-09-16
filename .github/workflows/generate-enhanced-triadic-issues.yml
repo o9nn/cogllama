@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      projects: write
     
     steps:
       - name: Checkout repository
@@ -136,33 +137,28 @@ jobs:
               });
             }
 
-      - name: Create Enhanced Project Board
+      - name: Create Enhanced Project Board (Projects v2)
         uses: actions/github-script@v7
         with:
           script: |
-            // Create enhanced project board for triadic architecture with OpenCoq integration
-            const project = await github.rest.projects.createForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: "Enhanced Triadic Architecture with OpenCoq Integration",
-              body: "Comprehensive implementation of Triadic Architecture of Relevance Realization with formal verification through OpenCoq"
-            });
+            // Create a new Projects v2 board using GraphQL
+            const repoId = (await github.graphql(`
+              query($owner: String!, $repo: String!) {
+                repository(owner: $owner, name: $repo) { id }
+              }
+            `, { owner: context.repo.owner, repo: context.repo.repo })).repository.id;
             
-            // Create columns for enhanced phases
-            const phases = [
-              "Phase 1: Core Components (Complete)",
-              "Phase 2: Neural Integration + OpenCoq", 
-              "Phase 3: Advanced Reasoning",
-              "Phase 4: Emergent Capabilities",
-              "Phase 5: Formal Verification",
-              "Phase 6: Meta-Cognitive Enhancement"
-            ];
-            
-            for (const phase of phases) {
-              await github.rest.projects.createColumn({
-                project_id: project.data.id,
-                name: phase
-              });
-            }
-            
-            console.log(`Created enhanced project board: ${project.data.html_url}`);
+            const project = await github.graphql(`
+              mutation($repoId: ID!) {
+                createProjectV2(input: {
+                  ownerId: $repoId
+                  title: "Enhanced Triadic Architecture with OpenCoq Integration"
+                }) {
+                  projectV2 { id, title, url }
+                }
+              }
+            `, { repoId });
+
+            console.log('Created Projects v2 board:', project.createProjectV2.projectV2.url);
+            console.log('Project ID:', project.createProjectV2.projectV2.id);
+            console.log('Note: Projects v2 uses custom fields and views instead of columns. Configure these in the web interface if needed.');

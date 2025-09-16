@@ -23,15 +23,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      projects: write
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-    - name: Generate Phase 1 Issues
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '1' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Phase 1 Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '1' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -133,10 +134,10 @@ jobs:
             });
           }
 
-    - name: Generate Phase 2 Issues
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '2' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Phase 2 Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '2' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -225,10 +226,10 @@ jobs:
             });
           }
 
-    - name: Generate Phase 3 Issues  
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '3' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Phase 3 Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '3' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -309,10 +310,10 @@ jobs:
             });
           }
 
-    - name: Generate Phase 4 Issues
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '4' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Phase 4 Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '4' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -393,10 +394,10 @@ jobs:
             });
           }
 
-    - name: Generate Testing and Validation Issues
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '5' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Testing and Validation Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '5' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -551,10 +552,10 @@ jobs:
             });
           }
           
-    - name: Generate Meta-Cognitive Enhancement Issues
-      if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '6' }}
-      uses: actions/github-script@v7
-      with:
+      - name: Generate Meta-Cognitive Enhancement Issues
+        if: ${{ github.event.inputs.phase == 'all' || github.event.inputs.phase == '6' }}
+        uses: actions/github-script@v7
+        with:
         script: |
           const issues = [
             {
@@ -689,33 +690,28 @@ jobs:
             });
           }
 
-    - name: Create Project Board
-      uses: actions/github-script@v7
-      with:
+      - name: Create Project Board (Projects v2)
+        uses: actions/github-script@v7
+        with:
         script: |
-          // Create a project board for tracking the triadic architecture implementation
-          const project = await github.rest.projects.createForRepo({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            name: "Triadic Architecture Implementation",
-            body: "Tracking implementation of the complete Triadic Architecture of Relevance Realization"
-          });
+          // Create a new Projects v2 board using GraphQL
+          const repoId = (await github.graphql(`
+            query($owner: String!, $repo: String!) {
+              repository(owner: $owner, name: $repo) { id }
+            }
+          `, { owner: context.repo.owner, repo: context.repo.repo })).repository.id;
           
-          // Create columns for each phase
-          const phases = [
-            "Phase 1: Core Components",
-            "Phase 2: Neural Integration", 
-            "Phase 3: Advanced Reasoning",
-            "Phase 4: Emergent Capabilities",
-            "Phase 5: Testing & Validation",
-            "Phase 6: Meta-Cognitive Enhancement"
-          ];
-          
-          for (const phase of phases) {
-            await github.rest.projects.createColumn({
-              project_id: project.data.id,
-              name: phase
-            });
-          }
-          
-          console.log(`Created project board: ${project.data.html_url}`);
+          const project = await github.graphql(`
+            mutation($repoId: ID!) {
+              createProjectV2(input: {
+                ownerId: $repoId
+                title: "Triadic Architecture Implementation"
+              }) {
+                projectV2 { id, title, url }
+              }
+            }
+          `, { repoId });
+
+          console.log('Created Projects v2 board:', project.createProjectV2.projectV2.url);
+          console.log('Project ID:', project.createProjectV2.projectV2.id);
+          console.log('Note: Projects v2 uses custom fields and views instead of columns. Configure these in the web interface if needed.');
