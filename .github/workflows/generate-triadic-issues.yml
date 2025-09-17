@@ -1,7 +1,7 @@
 name: Generate Development Issues for Triadic Architecture
 description: Creates GitHub issues for each phase of the Triadic Architecture implementation
 
-on:
+"on":
   workflow_dispatch:
     inputs:
       phase:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      projects: write
+      repository-projects: write
     
     steps:
       - name: Checkout repository
