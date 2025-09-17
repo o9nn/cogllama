@@ -23,7 +23,10 @@ public:
         LINK = 2,
         NUMBER = 3,
         VARIABLE = 4,
-        LAMBDA = 5
+        LAMBDA = 5,
+        CONCEPT_NODE = 0,    // Aliases for compatibility
+        PREDICATE_NODE = 1,
+        NUMBER_NODE = 3
     };
 
     // Hypergraph edge (link) types  
@@ -35,7 +38,9 @@ public:
         EXECUTION = 4,
         LIST = 5,
         SET = 6,
-        LAMBDA_LINK = 7
+        LAMBDA_LINK = 7,
+        LIST_LINK = 5,       // Alias for compatibility
+        ATTENTION_LINK = 8   // Added for attention mechanism
     };
 
     struct Node {

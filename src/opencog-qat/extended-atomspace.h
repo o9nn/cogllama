@@ -76,6 +76,16 @@ public:
         virtual std::string getTypeName() const = 0;
         virtual bool isNode() const = 0;
         virtual bool isLink() const = 0;
+        
+        // Getter and setter methods
+        const std::string& getName() const { return name; }
+        void setName(const std::string& new_name) { name = new_name; }
+        
+        const ExtendedTruthValue& getTruthValue() const { return truth_value; }
+        void setTruthValue(const ExtendedTruthValue& tv) { truth_value = tv; }
+        
+        uint32_t getId() const { return id; }
+        void setId(uint32_t new_id) { id = new_id; }
     };
 
     // Node implementation
@@ -83,11 +93,21 @@ public:
     public:
         HypergraphUtils::NodeType node_type;
         
+        // Default constructor
+        Node() : node_type(HypergraphUtils::NodeType::CONCEPT) {
+            this->id = 0;
+            this->name = "DefaultNode";
+        }
+        
         Node(uint32_t id, HypergraphUtils::NodeType type, const std::string& name)
             : node_type(type) {
             this->id = id;
             this->name = name;
         }
+        
+        // Setter methods
+        void setType(HypergraphUtils::NodeType type) { node_type = type; }
+        HypergraphUtils::NodeType getType() const { return node_type; }
         
         std::string getTypeName() const override {
             switch (node_type) {
@@ -110,11 +130,25 @@ public:
         HypergraphUtils::LinkType link_type;
         std::vector<std::shared_ptr<Atom>> outgoing;
         
+        // Default constructor
+        Link() : link_type(HypergraphUtils::LinkType::LIST) {
+            this->id = 0;
+            this->name = "DefaultLink";
+        }
+        
         Link(uint32_t id, HypergraphUtils::LinkType type, const std::string& name)
             : link_type(type) {
             this->id = id;
             this->name = name;
         }
+        
+        // Setter methods
+        void setType(HypergraphUtils::LinkType type) { link_type = type; }
+        HypergraphUtils::LinkType getType() const { return link_type; }
+        
+        // Outgoing atoms management
+        std::vector<std::shared_ptr<Atom>>& getOutgoing() { return outgoing; }
+        const std::vector<std::shared_ptr<Atom>>& getOutgoing() const { return outgoing; }
         
         std::string getTypeName() const override {
             switch (link_type) {
