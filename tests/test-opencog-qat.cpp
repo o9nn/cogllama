@@ -1,6 +1,7 @@
 #include "synthetic-calibration.h"
 #include "opencog-quantization.h"
 #include "qat-framework.h"
+#include "recursive-self-enhancement.h"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -278,6 +279,131 @@ bool test_qat_framework_factory() {
     return true;
 }
 
+bool test_recursive_self_enhancement() {
+    std::cout << "Testing RecursiveSelfEnhancement..." << std::endl;
+    
+    // Create required components
+    auto atomspace = std::make_shared<opencog_qat::ExtendedAtomSpace>();
+    auto rocq_bridge_unique = opencog_qat::RocqBridgeFactory::createDefault();
+    auto rocq_bridge = std::shared_ptr<opencog_qat::RocqProverBridge>(rocq_bridge_unique.release());
+    auto neural_bridge = opencog_qat::NeuralSymbolicBridgeFactory::createDefault(rocq_bridge, atomspace);
+    
+    // Create recursive self-enhancement system
+    auto neural_bridge_shared = std::shared_ptr<opencog_qat::NeuralSymbolicBridge>(neural_bridge.release());
+    auto enhancement = opencog_qat::RecursiveSelfEnhancementFactory::createDefault(
+        atomspace, rocq_bridge, neural_bridge_shared);
+    
+    ASSERT_TRUE(enhancement != nullptr);
+    
+    // Test meta-cognitive state initialization
+    const auto& meta_state = enhancement->getCurrentMetaCognitiveState();
+    ASSERT_TRUE(meta_state.evolution_generation == 0);
+    ASSERT_TRUE(meta_state.coherence_score >= 0.0 && meta_state.coherence_score <= 1.0);
+    ASSERT_TRUE(meta_state.safety_verified == true);
+    
+    // Test cognitive grammar evolution initialization
+    const auto& grammar_evolution = enhancement->getCognitiveGrammarEvolution();
+    ASSERT_TRUE(!grammar_evolution.grammar_rules.empty());
+    ASSERT_TRUE(!grammar_evolution.rule_fitness_scores.empty());
+    ASSERT_TRUE(grammar_evolution.converged == false);
+    
+    // Test safety monitor initialization
+    const auto& safety_status = enhancement->getSafetyStatus();
+    ASSERT_TRUE(safety_status.safety_enabled == true);
+    ASSERT_TRUE(safety_status.violation_count == 0);
+    ASSERT_TRUE(!safety_status.core_invariants.empty());
+    
+    // Test self-representation update
+    std::vector<float> test_cognitive_state = {0.8f, 0.7f, 0.6f, 0.5f};
+    bool update_success = enhancement->updateSelfRepresentation(test_cognitive_state);
+    ASSERT_TRUE(update_success);
+    
+    // Verify state was updated
+    const auto& updated_state = enhancement->getCurrentMetaCognitiveState();
+    ASSERT_TRUE(updated_state.self_model_state.size() == test_cognitive_state.size());
+    
+    // Test cognitive grammar evolution
+    std::map<std::string, double> performance_metrics = {
+        {"coherence", 0.85},
+        {"safety", 1.0},
+        {"convergence", 0.7}
+    };
+    bool evolution_success = enhancement->evolveCognitiveGrammar(performance_metrics);
+    ASSERT_TRUE(evolution_success);
+    
+    // Test boundary detection
+    auto boundary_status = enhancement->detectModificationBoundaries("test_modification");
+    ASSERT_TRUE(boundary_status.distance_to_boundary >= 0.0 && boundary_status.distance_to_boundary <= 1.0);
+    
+    // Test safety verification
+    std::vector<float> test_params = {0.05f, 0.03f, 0.02f};  // Small, safe modifications
+    bool safety_verified = enhancement->verifySelfModificationBoundaries("test", test_params);
+    ASSERT_TRUE(safety_verified);
+    
+    // Test safe modification application
+    bool modification_success = enhancement->applySafeModification(
+        "coherence_enhancement", test_params, false);  // Don't require formal proof for test
+    ASSERT_TRUE(modification_success);
+    
+    // Test full enhancement cycle
+    bool cycle_success = enhancement->performSelfEnhancementCycle();
+    ASSERT_TRUE(cycle_success);
+    
+    // Verify enhancement cycle updated generation
+    const auto& final_state = enhancement->getCurrentMetaCognitiveState();
+    ASSERT_TRUE(final_state.evolution_generation > 0);
+    
+    // Test formal proof generation
+    auto safety_proofs = enhancement->generateSafetyProofs(final_state, "test_enhancement");
+    ASSERT_TRUE(!safety_proofs.empty());
+    
+    // Verify proofs are properly formed
+    for (const auto& proof : safety_proofs) {
+        ASSERT_TRUE(proof != nullptr);
+        ASSERT_TRUE(!proof->theorem_name.empty());
+        ASSERT_TRUE(!proof->theorem_statement.empty());
+        ASSERT_TRUE(!proof->proof_term.empty());
+        ASSERT_TRUE(proof->verified == true);
+    }
+    
+    // Test convergence theorem generation
+    auto convergence_theorem = enhancement->generateConvergenceTheorem(grammar_evolution);
+    ASSERT_TRUE(convergence_theorem != nullptr);
+    ASSERT_TRUE(convergence_theorem->verified == true);
+    
+    // Test cognitive coherence verification
+    bool coherence_verified = enhancement->verifyCognitiveCoherence(final_state);
+    ASSERT_TRUE(coherence_verified);
+    
+    // Test enhancement report generation
+    std::string report = enhancement->generateEnhancementReport();
+    ASSERT_TRUE(!report.empty());
+    ASSERT_TRUE(report.find("Meta-Cognitive State") != std::string::npos);
+    ASSERT_TRUE(report.find("Safety Monitoring") != std::string::npos);
+    ASSERT_TRUE(report.find("Performance Metrics") != std::string::npos);
+    
+    // Test emergency stop functionality
+    enhancement->emergencyStop();
+    ASSERT_TRUE(enhancement->isEmergencyStopped() == true);
+    
+    // Verify cycle fails when emergency stopped
+    bool stopped_cycle_success = enhancement->performSelfEnhancementCycle();
+    ASSERT_TRUE(stopped_cycle_success == false);
+    
+    // Test factory variants  
+    auto safety_optimized = opencog_qat::RecursiveSelfEnhancementFactory::createSafetyOptimized(
+        atomspace, rocq_bridge, neural_bridge_shared);
+    ASSERT_TRUE(safety_optimized != nullptr);
+    
+    const auto& safety_config = safety_optimized->getConfiguration();
+    ASSERT_TRUE(safety_config.require_formal_proofs == true);
+    ASSERT_TRUE(safety_config.safety_threshold >= 0.99);
+    ASSERT_TRUE(safety_config.max_safety_violations <= 1);
+    
+    std::cout << "RecursiveSelfEnhancement tests passed!" << std::endl;
+    return true;
+}
+
 } // namespace opencog_qat_tests
 
 int main() {
@@ -295,6 +421,7 @@ int main() {
     all_tests_passed &= opencog_qat_tests::test_opencog_quantization_manager();
     all_tests_passed &= opencog_qat_tests::test_qat_framework();
     all_tests_passed &= opencog_qat_tests::test_qat_framework_factory();
+    all_tests_passed &= opencog_qat_tests::test_recursive_self_enhancement();
     
     std::cout << "======================================" << std::endl;
     if (all_tests_passed) {

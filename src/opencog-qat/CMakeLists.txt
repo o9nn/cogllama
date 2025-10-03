@@ -10,6 +10,7 @@ add_library(opencog_qat
     rocq-prover-bridge.cpp
     neural-symbolic-bridge.cpp
     opencoq-integration.cpp
+    recursive-self-enhancement.cpp
 )
 
 target_include_directories(opencog_qat PUBLIC
