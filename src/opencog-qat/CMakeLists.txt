@@ -7,6 +7,9 @@ add_library(opencog_qat
     qat-framework.cpp
     hypergraph-utils.cpp
     extended-atomspace.cpp
+    rocq-prover-bridge.cpp
+    neural-symbolic-bridge.cpp
+    opencoq-integration.cpp
 )
 
 target_include_directories(opencog_qat PUBLIC
