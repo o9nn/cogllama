@@ -446,20 +446,20 @@ int cogllama_ure_backward_chain(
 /**
  * cogllama_miner - Pattern mining engine
  * 
- * Discovers frequent patterns and surprisingity in AtomSpace
+ * Discovers frequent patterns and surprisingness in AtomSpace
  * using tensor-based mining algorithms.
  */
 struct cogllama_miner {
     struct cogllama_atomspace *atomspace;
     struct ggml_tensor *pattern_embeddings;
     float min_support;
-    float min_surprisingity;
+    float min_surprisingness;
 };
 
 /**
  * cogllama_mine_patterns - Mine frequent patterns
  * @miner: Miner engine
- * @params: Mining parameters (support, surprisingity)
+ * @params: Mining parameters (support, surprisingness)
  * @patterns: Output discovered patterns
  * 
  * Discovers frequent and surprising patterns in knowledge base.
