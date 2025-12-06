@@ -440,7 +440,7 @@ static int test_procedure_registration(void) {
     ) {
         struct cogllama_execution_result result = {
             .status = COGLLAMA_EXEC_SUCCESS,
-            .result_handle = args[0],
+            .result_handle = (n_args > 0) ? args[0] : 0,
             .execution_time = 0.0f,
             .error_message = NULL
         };

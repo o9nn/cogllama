@@ -117,7 +117,7 @@ uint64_t cogllama_execution_link_create(
     float truth[2] = {1.0f, 1.0f};
     uint64_t link_handle = cogllama_link_create(
         atomspace,
-        COGLLAMA_LINK_EVALUATION,  // Using EVALUATION for execution
+        COGLLAMA_LINK_EXECUTION,  // Using EXECUTION for execution
         outgoing,
         outgoing_size,
         truth
@@ -224,7 +224,7 @@ uint64_t cogllama_lambda_link_create(
     float truth[2] = {1.0f, 1.0f};
     uint64_t link_handle = cogllama_link_create(
         atomspace,
-        COGLLAMA_LINK_EVALUATION,  // Using EVALUATION for lambda
+        COGLLAMA_LINK_LAMBDA,  // Using LAMBDA for lambda
         outgoing,
         outgoing_size,
         truth
@@ -319,7 +319,7 @@ uint64_t cogllama_get_link_create(
     float truth[2] = {1.0f, 1.0f};
     uint64_t link_handle = cogllama_link_create(
         atomspace,
-        COGLLAMA_LINK_EVALUATION,  // Using EVALUATION for get
+        COGLLAMA_LINK_GET,  // Using GET for get
         outgoing,
         outgoing_size,
         truth
@@ -385,7 +385,7 @@ uint64_t cogllama_put_link_create(
     float truth[2] = {1.0f, 1.0f};
     uint64_t link_handle = cogllama_link_create(
         atomspace,
-        COGLLAMA_LINK_EVALUATION,  // Using EVALUATION for put
+        COGLLAMA_LINK_PUT,  // Using PUT for put
         outgoing,
         outgoing_size,
         truth
