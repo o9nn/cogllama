@@ -99,6 +99,12 @@ uint64_t cogllama_execution_link_create(
         fprintf(stderr, "cogllama_execution_link_create: invalid parameters\n");
         return 0;
     }
+    
+    // Check args validity if n_args > 0
+    if (n_args > 0 && !args) {
+        fprintf(stderr, "cogllama_execution_link_create: args is null but n_args > 0\n");
+        return 0;
+    }
 
     // Create outgoing set: [procedure, arg1, arg2, ...]
     size_t outgoing_size = n_args + 1;
@@ -300,6 +306,12 @@ uint64_t cogllama_get_link_create(
 ) {
     if (!atomspace || pattern_handle == 0) {
         fprintf(stderr, "cogllama_get_link_create: invalid parameters\n");
+        return 0;
+    }
+    
+    // Check variable_handles validity if n_variables > 0
+    if (n_variables > 0 && !variable_handles) {
+        fprintf(stderr, "cogllama_get_link_create: variable_handles is null but n_variables > 0\n");
         return 0;
     }
 
