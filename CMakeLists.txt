@@ -212,6 +212,9 @@ if (LLAMA_BUILD_COMMON)
     add_subdirectory(src/opencog-qat)
 endif()
 
+# Add CogLlama Core Components
+add_subdirectory(src/cogllama-core)
+
 #
 # install
 #
