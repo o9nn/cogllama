@@ -37,3 +37,6 @@ else()
         add_subdirectory(export-lora)
     endif()
 endif()
+
+# OpenCoq QAT tools
+add_subdirectory(recursive-enhancement-demo)
