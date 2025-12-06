@@ -17,3 +17,22 @@ target_compile_features(test-cogllama-core PRIVATE c_std_99)
 
 # Add test to CTest
 add_test(NAME cogllama-core COMMAND test-cogllama-core)
+
+# CogLlama Expression Tests
+add_executable(test-expression test-expression.c)
+
+target_include_directories(test-expression PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cogllama-core/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../ggml/include
+)
+
+target_link_libraries(test-expression PRIVATE
+    cogllama-core
+    ggml
+    m
+)
+
+target_compile_features(test-expression PRIVATE c_std_99)
+
+# Add test to CTest
+add_test(NAME expression COMMAND test-expression)
