@@ -43,9 +43,19 @@ int main(int argc, char **argv) {
     // Create some concept nodes
     print_separator("Creating Concept Nodes");
     
-    float cat_embedding[embedding_dim];
-    float animal_embedding[embedding_dim];
-    float mammal_embedding[embedding_dim];
+    // Use dynamic allocation to avoid VLA stack issues
+    float *cat_embedding = (float *)malloc(embedding_dim * sizeof(float));
+    float *animal_embedding = (float *)malloc(embedding_dim * sizeof(float));
+    float *mammal_embedding = (float *)malloc(embedding_dim * sizeof(float));
+    
+    if (!cat_embedding || !animal_embedding || !mammal_embedding) {
+        fprintf(stderr, "Failed to allocate embeddings\n");
+        cogllama_atomspace_free(atomspace);
+        free(cat_embedding);
+        free(animal_embedding);
+        free(mammal_embedding);
+        return 1;
+    }
     
     // Initialize embeddings with simple values
     for (size_t i = 0; i < embedding_dim; i++) {
@@ -156,6 +166,11 @@ int main(int argc, char **argv) {
     
     printf("Freeing AtomSpace...\n");
     cogllama_atomspace_free(atomspace);
+    
+    // Free embeddings
+    free(cat_embedding);
+    free(animal_embedding);
+    free(mammal_embedding);
     
     printf("Demo completed successfully!\n\n");
 

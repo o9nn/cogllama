@@ -33,9 +33,13 @@ struct cogllama_atomspace *cogllama_atomspace_init(
     atomspace->atom_count = 0;
 
     // Calculate memory requirements
+    // NOTE: Current implementation uses dense O(n²) adjacency matrix for links
+    // which is suitable for small-scale demonstrations (< 10K atoms).
+    // For production with larger atom spaces, use sparse representation or
+    // separate adjacency lists to avoid memory issues.
     size_t mem_size = 0;
     mem_size += max_atoms * embedding_dim * sizeof(float);  // atoms
-    mem_size += max_atoms * max_atoms * sizeof(float);      // links
+    mem_size += max_atoms * max_atoms * sizeof(float);      // links (O(n²) - see note above)
     mem_size += max_atoms * 2 * sizeof(float);              // truth_values
     mem_size += max_atoms * 3 * sizeof(float);              // attention
     mem_size += 1024 * 1024;                                // overhead
