@@ -40,3 +40,6 @@ endif()
 
 # OpenCoq QAT tools
 add_subdirectory(recursive-enhancement-demo)
+
+# CogLlama Core demo
+add_subdirectory(cogllama-demo)
