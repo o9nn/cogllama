@@ -31,6 +31,7 @@ enum cogllama_atom_type {
     COGLLAMA_ATOM_PREDICATE_NODE,
     COGLLAMA_ATOM_VARIABLE_NODE,
     COGLLAMA_ATOM_NUMBER_NODE,
+    COGLLAMA_ATOM_SCHEMA_NODE,          // For procedures/functions
     
     // Link types
     COGLLAMA_ATOM_LINK = 100,
@@ -41,6 +42,15 @@ enum cogllama_atom_type {
     COGLLAMA_ATOM_AND_LINK,
     COGLLAMA_ATOM_OR_LINK,
     COGLLAMA_ATOM_NOT_LINK,
+    
+    // Expression link types
+    COGLLAMA_ATOM_EXECUTION_LINK,       // ExecutionLink - execute procedures
+    COGLLAMA_ATOM_LAMBDA_LINK,          // LambdaLink - lambda expressions
+    COGLLAMA_ATOM_GET_LINK,             // GetLink - pattern matching queries
+    COGLLAMA_ATOM_PUT_LINK,             // PutLink - variable substitution
+    COGLLAMA_ATOM_DEFINE_LINK,          // DefineLink - name definitions
+    COGLLAMA_ATOM_QUOTE_LINK,           // QuoteLink - prevent evaluation
+    COGLLAMA_ATOM_UNQUOTE_LINK,         // UnquoteLink - force evaluation
 };
 
 /**
@@ -54,6 +64,10 @@ enum cogllama_link_type {
     COGLLAMA_LINK_AND,
     COGLLAMA_LINK_OR,
     COGLLAMA_LINK_NOT,
+    COGLLAMA_LINK_EXECUTION,            // ExecutionLink
+    COGLLAMA_LINK_LAMBDA,               // LambdaLink
+    COGLLAMA_LINK_GET,                  // GetLink
+    COGLLAMA_LINK_PUT,                  // PutLink
 };
 
 /**

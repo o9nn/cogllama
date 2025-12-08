@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 add_library(cogllama-core
     src/atomspace.c
     src/cogserver.c
+    src/expression.c
 )
 
 target_include_directories(cogllama-core PUBLIC
